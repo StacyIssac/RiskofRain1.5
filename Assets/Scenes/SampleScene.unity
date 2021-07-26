@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -390,7 +390,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -112, y: 31}
+  m_AnchoredPosition: {x: -67.5, y: 31}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &218317503
@@ -1246,22 +1246,22 @@ MonoBehaviour:
   capsuleLength: 1
   height: 3
   cam1: {fileID: 2134569818}
-  runningValue: 0
+  runningValue: 50
   rushButton: {fileID: 218317503}
-  rushCDTime: 5
+  rushCDTime: 7
   rushDis: 0.5
   rushSpeed: 0.5
   rushMaxTime: 0.2
   vertigoButton: {fileID: 680316742}
   vertigoObj: {fileID: 6966351191755824837, guid: ad4402b3e9952d3428c29b0bba0151b6, type: 3}
-  vertigoCDTime: 5
+  vertigoCDTime: 1
   createDis: 2
   vertigoSpeed: 50
   vertigoValue: 30
   vertigoRadius: 10
   trackButton: {fileID: 2143369500}
   trackObj: {fileID: 1192773807624692504, guid: 315d04031e4d779498202513045f3963, type: 3}
-  trackCDTime: 5
+  trackCDTime: 20
   trackSpeed: 0
   trackValue: 0
   trackTempTimer: 1
@@ -1300,7 +1300,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -70, y: 31}
+  m_AnchoredPosition: {x: -111.8, y: 31}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &680316742
@@ -1368,7 +1368,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8099494948319707624, guid: 691c8635e0c44aa4ea66d6dfbd271439, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8099494948319707630, guid: 691c8635e0c44aa4ea66d6dfbd271439, type: 3}
       propertyPath: m_RootOrder
@@ -1376,7 +1376,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8099494948319707630, guid: 691c8635e0c44aa4ea66d6dfbd271439, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 30.48
+      value: 50.6
       objectReference: {fileID: 0}
     - target: {fileID: 8099494948319707630, guid: 691c8635e0c44aa4ea66d6dfbd271439, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2078,7 +2078,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1145021284}
-  m_LocalRotation: {x: 0.06990154, y: -0.00000001749395, z: 0.0000000012258526, w: 0.99755394}
+  m_LocalRotation: {x: 0.06990155, y: 0.000000005462488, z: -3.8277284e-10, w: 0.99755394}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2715,7 +2715,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1743195871}
-  m_LocalRotation: {x: 0.07305258, y: -0.000000012870303, z: 9.427277e-10, w: 0.9973281}
+  m_LocalRotation: {x: 0.07305258, y: 0.000000012870306, z: -9.427279e-10, w: 0.9973281}
   m_LocalPosition: {x: 0, y: -0.07999992, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

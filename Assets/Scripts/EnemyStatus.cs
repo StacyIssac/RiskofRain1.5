@@ -85,6 +85,10 @@ public class EnemyStatus : MonoBehaviour
         {
             trackObj.SetActive(true);
         }
+        else
+        {
+            trackObj.SetActive(false);
+        }
     }
 
     public void CreateBullet()

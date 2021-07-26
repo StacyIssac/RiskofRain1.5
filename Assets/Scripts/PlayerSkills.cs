@@ -61,6 +61,7 @@ public class PlayerSkills : MonoBehaviour
     public float trackTempTimer = 1;
     int putTrack = 0;
     int enemyNums = 0;
+    int indexNum = 0;
     float trackNum = 20;
     float trackTimer;
     bool isTrack = false;
@@ -164,6 +165,7 @@ public class PlayerSkills : MonoBehaviour
                 this.GetComponent<MeshRenderer>().enabled = true;
                 rushTime = 0;
                 canRush = false;
+                canRunning = 1;
             }
         }
     }
@@ -317,15 +319,14 @@ public class PlayerSkills : MonoBehaviour
         else if (putTrack == 2)
         {
             //发射导弹
-            var indexNum = 0;
-            //按顺序进行循环，每次生成一个导弹
+            indexNum = 0;
             for (int i = 0; i < trackNum; i++)
             {
                 if (indexNum < enemyObjs.Count)
                 {
-                    Debug.Log(1);
-                    var tempBullet = Instantiate(trackObj, transform.position + new Vector3(0, 3, 0), Quaternion.identity);
-                    tempBullet.GetComponent<TrackBulletController>().target = enemyObjs[indexNum].transform;
+                    var rotation = Quaternion.Euler(0f, Random.Range(-100f, 100), Random.Range(0f, 90f));
+                    var tempBullet = Instantiate(trackObj, transform.position + new Vector3(0, 3, 0), rotation);
+                    tempBullet.GetComponent<TrackBulletController>().Target = enemyObjs[indexNum].transform;
                     indexNum++;
                 }
                 else
@@ -333,9 +334,9 @@ public class PlayerSkills : MonoBehaviour
                     indexNum = 0;
                 }
 
-                StartCoroutine("WaitBullet");
             }
-            Debug.Log(2);
+
+            Invoke("UnTrack", 5f);
             putTrack = 0;
         }
     }
@@ -356,8 +357,14 @@ public class PlayerSkills : MonoBehaviour
         return false;
     }
 
-    IEnumerable WaitBullet()
+    void UnTrack()
     {
-        yield return new WaitForSeconds(trackTempTimer);
+        for (int i = 0; i < enemyObjs.Count; i++)
+        {
+            Debug.Log(1);
+            enemyObjs[i].GetComponent<EnemyStatus>().isTrack = false;
+        }
+
+        enemyObjs.Clear();
     }
 }

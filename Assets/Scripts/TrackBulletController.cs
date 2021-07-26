@@ -4,69 +4,95 @@ using UnityEngine;
 
 public class TrackBulletController : MonoBehaviour
 {
-    public Transform target; //瞄准的目标
-    Vector3 speed = new Vector3(0, 0, 20); //炮弹本地坐标速度
-    Vector3 lastSpeed; //存储转向前炮弹的本地坐标速度
-    int rotateSpeed = 100; //旋转的速度，单位 度/秒
-    Vector3 finalForward; //目标到自身连线的向量，最终朝向
-    float angleOffset;  //自己的forward朝向和mFinalForward之间的夹角
-    RaycastHit hit;
+    [SerializeField, Tooltip("最大转弯速度")]
+    private float MaximumRotationSpeed = 120.0f;
 
-    void Start()
+    [SerializeField, Tooltip("加速度")]
+    private float AcceleratedVeocity = 12.8f;
+
+    [SerializeField, Tooltip("最高速度")]
+    private float MaximumVelocity = 30.0f;
+
+    [SerializeField, Tooltip("生命周期")]
+    private float MaximumLifeTime = 8.0f;
+
+    [SerializeField, Tooltip("上升期时间")]
+    private float AccelerationPeriod = 0.5f;
+
+    [HideInInspector]
+    public Transform Target = null;        // 目标
+    [HideInInspector]
+    public float CurrentVelocity = 0.0f;   // 当前速度
+
+    public float attackValue;
+
+    private float lifeTime = 0.0f;            // 生命期
+
+    float Velocity;
+    float RotationSpeed;
+
+    private void Start()
     {
-        //将炮弹的本地坐标速度转换为世界坐标
-        speed = transform.TransformDirection(speed);
+        RotationSpeed = Random.Range(MaximumRotationSpeed, MaximumRotationSpeed - 20);
+        Velocity = Random.Range(MaximumVelocity, MaximumVelocity - 10);
+        AccelerationPeriod = Random.Range(AccelerationPeriod, AccelerationPeriod + 0.4f);
     }
 
-    void Update()
+    // 爆炸
+    private void Explode()
     {
-        CheckHint();
-        UpdateRotation();
-        UpdatePosition();
+        // 三秒后删除导弹物体，这时候烟雾已经散去，可以删掉物体了
+        Destroy(gameObject);
     }
 
-    //射线检测，如果击中目标点则销毁炮弹
-    void CheckHint()
+    private void Update()
     {
-        if (Physics.Raycast(transform.position, transform.forward, out hit))
+        float deltaTime = Time.deltaTime;
+        lifeTime += deltaTime;
+
+        // 如果超出生命周期，则直接爆炸。
+        if (lifeTime > MaximumLifeTime)
         {
-            if (hit.transform == target && hit.distance < 1)
-            {
-                Destroy(gameObject);
-            }
+            Explode();
+            return;
         }
-    }
 
-    //更新位置
-    void UpdatePosition()
-    {
-        transform.position = transform.position + speed * Time.deltaTime;
-    }
+        // 计算朝向目标的方向偏移量，如果处于上升期，则忽略目标
+        Vector3 offset =((lifeTime < AccelerationPeriod) && (Target != null)) ? Vector3.up : (Target.position - transform.position).normalized;
 
-    //旋转，使其朝向目标点，要改变速度的方向
-    void UpdateRotation()
-    {
-        //先将速度转为本地坐标，旋转之后再变为世界坐标
-        lastSpeed = transform.InverseTransformDirection(speed);
+        // 计算当前方向与目标方向的角度差
+        float angle = Vector3.Angle(transform.forward, offset);
 
-        ChangeForward(rotateSpeed * Time.deltaTime);
+        // 根据最大旋转速度，计算转向目标共计需要的时间
+        float needTime = angle / (RotationSpeed * (CurrentVelocity / Velocity));
 
-        speed = transform.TransformDirection(lastSpeed);
-    }
-
-    void ChangeForward(float speed)
-    {
-        //获得目标点到自身的朝向
-        finalForward = (target.position - transform.position).normalized;
-        if (finalForward != transform.forward)
+        // 如果角度很小，就直接对准目标
+        if (Vector3.Distance(Target.position, transform.position) < 30)
         {
-            angleOffset = Vector3.Angle(transform.forward, finalForward);
-            if (angleOffset > rotateSpeed)
-            {
-                angleOffset = rotateSpeed;
-            }
-            //将自身forward朝向慢慢转向最终朝向
-            transform.forward = Vector3.Lerp(transform.forward, finalForward, speed / angleOffset);
+            transform.forward = offset;
         }
+        else
+        {
+            // 当前帧间隔时间除以需要的时间，获取本次应该旋转的比例。
+            transform.forward = Vector3.Slerp(transform.forward, offset, deltaTime / needTime).normalized;
+        }
+
+        // 如果当前速度小于最高速度，则进行加速
+        if (CurrentVelocity < MaximumVelocity)
+            CurrentVelocity += deltaTime * AcceleratedVeocity;
+
+        // 朝自己的前方位移
+        transform.position += transform.forward * CurrentVelocity * deltaTime;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // 当发生碰撞，爆炸
+        if(other.tag == "Enemy")
+        {
+            other.gameObject.GetComponent<EnemyStatus>().HP -= attackValue;
+            other.gameObject.GetComponent<EnemyStatus>().hasAttack = true;
+        }
+        Explode();
     }
 }

@@ -108,10 +108,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11e1d8cdd92d446419ef4c83aad2833d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Target: {fileID: 0}
-  MaximumRotationSpeed: 120
-  AcceleratedVeocity: 12.8
-  MaximumVelocity: 30
+  MaximumRotationSpeed: 150
+  AcceleratedVeocity: 13
+  MaximumVelocity: 50
   MaximumLifeTime: 8
   AccelerationPeriod: 0.5
+  Target: {fileID: 0}
   CurrentVelocity: 0
+  attackValue: 48
