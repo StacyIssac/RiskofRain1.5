@@ -4,83 +4,69 @@ using UnityEngine;
 
 public class TrackBulletController : MonoBehaviour
 {
-    public Transform Target = null;        // 目标
+    public Transform target; //瞄准的目标
+    Vector3 speed = new Vector3(0, 0, 20); //炮弹本地坐标速度
+    Vector3 lastSpeed; //存储转向前炮弹的本地坐标速度
+    int rotateSpeed = 100; //旋转的速度，单位 度/秒
+    Vector3 finalForward; //目标到自身连线的向量，最终朝向
+    float angleOffset;  //自己的forward朝向和mFinalForward之间的夹角
+    RaycastHit hit;
 
-    [SerializeField, Tooltip("最大转弯速度")]
-    private float MaximumRotationSpeed = 120.0f;
-
-    [SerializeField, Tooltip("加速度")]
-    private float AcceleratedVeocity = 12.8f;
-
-    [SerializeField, Tooltip("最高速度")]
-    private float MaximumVelocity = 30.0f;
-
-    [SerializeField, Tooltip("生命周期")]
-    private float MaximumLifeTime = 8.0f;
-
-    [SerializeField, Tooltip("上升期时间")]
-    private float AccelerationPeriod = 0.5f;
-
-    [HideInInspector]
-    public float CurrentVelocity = 0.0f;   // 当前速度
-
-    private AudioSource audioSource = null;   // 音效组件
-    private float lifeTime = 0.0f;            // 生命期
-
-    // Start is called before the first frame update
     void Start()
     {
-
+        //将炮弹的本地坐标速度转换为世界坐标
+        speed = transform.TransformDirection(speed);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        BulletMove();
+        CheckHint();
+        UpdateRotation();
+        UpdatePosition();
     }
 
-    void BulletMove()
+    //射线检测，如果击中目标点则销毁炮弹
+    void CheckHint()
     {
-        lifeTime += Time.deltaTime;
-
-        // 计算朝向目标的方向偏移量，如果处于上升期，则忽略目标
-        Vector3 offset =
-            ((lifeTime < AccelerationPeriod) && (Target != null))
-            ? Vector3.up
-            : (Target.position - transform.position).normalized;
-
-        // 计算当前方向与目标方向的角度差
-        float angle = Vector3.Angle(transform.forward, offset);
-
-        // 根据最大旋转速度，计算转向目标共计需要的时间
-        float needTime = angle / (MaximumRotationSpeed * (CurrentVelocity / MaximumVelocity));
-
-        // 如果角度很小，就直接对准目标
-        if (needTime < 0.001f)
+        if (Physics.Raycast(transform.position, transform.forward, out hit))
         {
-            transform.forward = offset;
+            if (hit.transform == target && hit.distance < 1)
+            {
+                Destroy(gameObject);
+            }
         }
-        else
+    }
+
+    //更新位置
+    void UpdatePosition()
+    {
+        transform.position = transform.position + speed * Time.deltaTime;
+    }
+
+    //旋转，使其朝向目标点，要改变速度的方向
+    void UpdateRotation()
+    {
+        //先将速度转为本地坐标，旋转之后再变为世界坐标
+        lastSpeed = transform.InverseTransformDirection(speed);
+
+        ChangeForward(rotateSpeed * Time.deltaTime);
+
+        speed = transform.TransformDirection(lastSpeed);
+    }
+
+    void ChangeForward(float speed)
+    {
+        //获得目标点到自身的朝向
+        finalForward = (target.position - transform.position).normalized;
+        if (finalForward != transform.forward)
         {
-            // 当前帧间隔时间除以需要的时间，获取本次应该旋转的比例。
-            transform.forward = Vector3.Slerp(transform.forward, offset, Time.deltaTime / needTime).normalized;
+            angleOffset = Vector3.Angle(transform.forward, finalForward);
+            if (angleOffset > rotateSpeed)
+            {
+                angleOffset = rotateSpeed;
+            }
+            //将自身forward朝向慢慢转向最终朝向
+            transform.forward = Vector3.Lerp(transform.forward, finalForward, speed / angleOffset);
         }
-
-        // 如果当前速度小于最高速度，则进行加速
-        if (CurrentVelocity < MaximumVelocity)
-            CurrentVelocity += Time.deltaTime * AcceleratedVeocity;
-
-        // 朝自己的前方位移
-        transform.position += transform.forward * CurrentVelocity * Time.deltaTime;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        Explode();
-    }
-
-    private void Explode()
-    {
-        Destroy(this.gameObject);
     }
 }

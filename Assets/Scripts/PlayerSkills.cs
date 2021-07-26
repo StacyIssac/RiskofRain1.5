@@ -58,11 +58,12 @@ public class PlayerSkills : MonoBehaviour
     public float trackCDTime;
     public float trackSpeed;
     public float trackValue;
-    bool canTrack = false;
+    public float trackTempTimer = 1;
     int putTrack = 0;
     int enemyNums = 0;
     float trackNum = 20;
     float trackTimer;
+    bool isTrack = false;
     List<GameObject> enemyObjs = new List<GameObject>();
 
     // Start is called before the first frame update
@@ -132,6 +133,7 @@ public class PlayerSkills : MonoBehaviour
         {
             trackTimer -= Time.deltaTime;
         }
+
         Track();
 
         if (canRush)
@@ -279,35 +281,38 @@ public class PlayerSkills : MonoBehaviour
             trackButton.isSkill = true;
 
             //当第一次按下R时，开启锁定
-            if (putTrack == 0)
+            if (putTrack == 0 && !isTrack)
             {
                 putTrack = 1;
+                isTrack = true;
                 Debug.Log("open");
-            }
-            //当第二次按下R时，关闭锁定，同时生成导弹
-            else if (putTrack == 1)
-            {
-                putTrack = 2;
             }
         }
     }
 
     void Track()
     {
+        if (Input.GetKeyDown(KeyCode.R) && putTrack == 1 && !isTrack)
+        {
+            putTrack = 2;
+            Debug.Log("shoot");
+        }
+
         if (putTrack == 1)
         {
-            if (Physics.Raycast(ray, out hit))
+            //获得交点
+            if (Physics.Raycast(ray.origin, ray.direction, out hit) && enemyNums < trackNum)
             {
-                //获得交点
-                if (Physics.Linecast(transform.position, hit.transform.position, out hit) && hit.transform.tag == "Enemy" && enemyNums < trackNum)
+                if(hit.transform.tag == "Enemy")
                 {
-                    if(!hit.transform.gameObject.GetComponent<EnemyStatus>().isTrack)
+                    if (!hit.transform.gameObject.GetComponent<EnemyStatus>().isTrack)
                     {
                         hit.transform.gameObject.GetComponent<EnemyStatus>().isTrack = true;
                         enemyObjs.Add(hit.transform.gameObject);
                     }
                 }
             }
+            isTrack = false;
         }
         else if (putTrack == 2)
         {
@@ -318,15 +323,20 @@ public class PlayerSkills : MonoBehaviour
             {
                 if (indexNum < enemyObjs.Count)
                 {
-                    var tempBullet = Instantiate(trackObj, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
-                    tempBullet.GetComponent<TrackBulletController>().Target = enemyObjs[indexNum].transform;
+                    Debug.Log(1);
+                    var tempBullet = Instantiate(trackObj, transform.position + new Vector3(0, 3, 0), Quaternion.identity);
+                    tempBullet.GetComponent<TrackBulletController>().target = enemyObjs[indexNum].transform;
                     indexNum++;
                 }
                 else
                 {
                     indexNum = 0;
                 }
+
+                StartCoroutine("WaitBullet");
             }
+            Debug.Log(2);
+            putTrack = 0;
         }
     }
 
@@ -344,5 +354,10 @@ public class PlayerSkills : MonoBehaviour
             }
         }
         return false;
+    }
+
+    IEnumerable WaitBullet()
+    {
+        yield return new WaitForSeconds(trackTempTimer);
     }
 }
