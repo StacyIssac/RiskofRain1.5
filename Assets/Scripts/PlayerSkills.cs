@@ -32,28 +32,38 @@ public class PlayerSkills : MonoBehaviour
     int canRunning = -1;
 
     [Header("瞬移冲刺")]
+    public SkillButtonController rushButton;
+    public float rushCDTime;
     public float rushDis;
     public float rushSpeed;
     public float rushMaxTime = 0.2f;
+    float rushTimer;
     float rushTime = 0;
     bool canRush = false;
     Vector3 rushVec = Vector3.zero;
 
     [Header("眩晕弹")]
+    public SkillButtonController vertigoButton;
     public GameObject vertigoObj;
+    public float vertigoCDTime;
     public float createDis;
     public float vertigoSpeed;
     public float vertigoValue;
     public float vertigoRadius;
+    float vertigoTimer;
 
     [Header("跟踪导弹")]
+    public SkillButtonController trackButton;
+    public GameObject trackObj;
+    public float trackCDTime;
     public float trackSpeed;
     public float trackValue;
     bool canTrack = false;
     int putTrack = 0;
     int enemyNums = 0;
     float trackNum = 20;
-    GameObject[] enemyObjs = new GameObject[20];
+    float trackTimer;
+    List<GameObject> enemyObjs = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
@@ -62,6 +72,15 @@ public class PlayerSkills : MonoBehaviour
         //moveSpeed = playerController.moveSpeed;
         runSpeed = playerController.moveSpeed;
         HP = maxHP;
+
+        //设置技能CD
+        rushTimer = 0;
+        vertigoTimer = 0;
+        trackTimer = 0;
+
+        rushButton.skillCDTime = rushCDTime;
+        vertigoButton.skillCDTime = vertigoCDTime;
+        trackButton.skillCDTime = trackCDTime;
     }
 
     // Update is called once per frame
@@ -83,8 +102,36 @@ public class PlayerSkills : MonoBehaviour
 
         Shooting();
         Running();
-        Rush();
-        Vertigo();
+
+        //冲刺
+        if (rushTimer < 0)
+        {
+            Rush();
+        }
+        else
+        {
+            rushTimer -= Time.deltaTime;
+        }
+
+        //眩晕
+        if (vertigoTimer < 0)
+        {
+            Vertigo();
+        }
+        else
+        {
+            vertigoTimer -= Time.deltaTime;
+        }
+
+        //追踪
+        if (trackTimer < 0)
+        {
+            TrackCheck();
+        }
+        else
+        {
+            trackTimer -= Time.deltaTime;
+        }
         Track();
 
         if (canRush)
@@ -193,6 +240,9 @@ public class PlayerSkills : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.LeftShift))
         {
+            rushTimer = rushCDTime;
+            rushButton.isSkill = true;
+
             //有移动方向
             if (playerController.direction.magnitude >= 0.1f)
             {
@@ -212,29 +262,38 @@ public class PlayerSkills : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(1))
         {
+            vertigoTimer = vertigoCDTime;
+            vertigoButton.isSkill = true;
+
             //创建一个导弹
             var moveDir = Vector3.Normalize(playerController.moveDir);
             Instantiate(vertigoObj, transform.position + new Vector3(moveDir.x * createDis, 0, moveDir.z * createDis), Quaternion.identity);
         }
     }
 
-    void Track()
+    void TrackCheck()
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
+            trackTimer = trackCDTime;
+            trackButton.isSkill = true;
+
             //当第一次按下R时，开启锁定
-            if(putTrack == 0)
+            if (putTrack == 0)
             {
                 putTrack = 1;
                 Debug.Log("open");
             }
             //当第二次按下R时，关闭锁定，同时生成导弹
-            else if(putTrack == 1)
+            else if (putTrack == 1)
             {
                 putTrack = 2;
             }
         }
+    }
 
+    void Track()
+    {
         if (putTrack == 1)
         {
             if (Physics.Raycast(ray, out hit))
@@ -245,7 +304,7 @@ public class PlayerSkills : MonoBehaviour
                     if(!hit.transform.gameObject.GetComponent<EnemyStatus>().isTrack)
                     {
                         hit.transform.gameObject.GetComponent<EnemyStatus>().isTrack = true;
-                        enemyObjs[enemyNums++] = hit.transform.gameObject;
+                        enemyObjs.Add(hit.transform.gameObject);
                     }
                 }
             }
@@ -253,7 +312,21 @@ public class PlayerSkills : MonoBehaviour
         else if (putTrack == 2)
         {
             //发射导弹
-            ;
+            var indexNum = 0;
+            //按顺序进行循环，每次生成一个导弹
+            for (int i = 0; i < trackNum; i++)
+            {
+                if (indexNum < enemyObjs.Count)
+                {
+                    var tempBullet = Instantiate(trackObj, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+                    tempBullet.GetComponent<TrackBulletController>().Target = enemyObjs[indexNum].transform;
+                    indexNum++;
+                }
+                else
+                {
+                    indexNum = 0;
+                }
+            }
         }
     }
 
