@@ -8,6 +8,7 @@ public class VertigoController : MonoBehaviour
     float speed;
     float attackVal;
     float radius;
+    float timer;
     bool canVertigo = false;
     Vector3 moveForce;
     Rigidbody rigi;
@@ -47,6 +48,12 @@ public class VertigoController : MonoBehaviour
             }
             Destroy(this.gameObject);
         }
+
+        if(timer > 5)
+        {
+            Destroy(this.gameObject);
+        }
+        timer += Time.deltaTime;
     }
 
     private void OnTriggerEnter(Collider other)

@@ -98,7 +98,15 @@ public class PlayerSkills : MonoBehaviour
             else if (rushTime > 0 && rushTime < rushMaxTime)
             {
                 //快速移动
-                transform.position = Vector3.MoveTowards(transform.position, transform.position + rushVec * rushDis, rushSpeed);
+                if(WallCheck())
+                {
+                    rushTime = rushMaxTime;
+                }
+                else
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, transform.position + rushVec * rushDis, rushSpeed);
+
+                }
                 rushTime += Time.deltaTime;
             }
             else if (rushTime >= rushMaxTime)
@@ -194,7 +202,7 @@ public class PlayerSkills : MonoBehaviour
             else //无移动方向
             {
                 //向镜头指向方向瞬移
-                rushVec = playerController.moveDir;
+                rushVec = Vector3.Normalize(new Vector3(playerController.moveDir.x, ray.direction.y, playerController.moveDir.z));
             }
             canRush = true;
         }
@@ -247,5 +255,21 @@ public class PlayerSkills : MonoBehaviour
             //发射导弹
             ;
         }
+    }
+
+    bool WallCheck()
+    {
+        Ray wallRay = new Ray(transform.position, new Vector3(playerController.moveDir.x, ray.direction.y, playerController.moveDir.z));
+        Debug.DrawRay(transform.position, new Vector3(playerController.moveDir.x, ray.direction.y, playerController.moveDir.z));
+        if (Physics.Raycast(wallRay, out hit))
+        {
+            //获得交点
+            if (Physics.Linecast(transform.position, hit.transform.position, out hit) && hit.transform.tag == "Ground" && hit.distance < 0.5)
+            {
+                Debug.Log(true);
+                return true;
+            }
+        }
+        return false;
     }
 }

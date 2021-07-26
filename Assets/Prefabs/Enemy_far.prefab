@@ -473,8 +473,8 @@ MonoBehaviour:
         byteData: 
         byteDataArray: 
       Version: 1.6.8
-  gizmoViewMode: 2
-  showBehaviorDesignerGizmo: 1
+  gizmoViewMode: 0
+  showBehaviorDesignerGizmo: 0
 --- !u!114 &4123416045387431526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -491,7 +491,7 @@ MonoBehaviour:
   HP: 78
   maxHP: 78
   canSeeHP: 0
-  HPSlider: {fileID: 0}
+  HPSlider: {fileID: 4123416045009246593}
   timeHP: 3
   attackVal: 10
   attackDis: 30
