@@ -27,6 +27,7 @@ public class PlayerSkills : MonoBehaviour
 
     [Header("快跑")]
     public CinemachineFreeLook cam1;
+    public CinemachineFreeLook cam2;
     public float runningValue;
     float runSpeed;
     int canRunning = -1;
@@ -94,12 +95,14 @@ public class PlayerSkills : MonoBehaviour
         if (canRunning == 1)
         {
             playerController.moveSpeed = runningValue;
-            SetCamera(15);
+            cam1.enabled = true;
+            cam2.enabled = false;
         }
         else
         {
             playerController.moveSpeed = runSpeed;
-            SetCamera(5);
+            cam1.enabled = false;
+            cam2.enabled = true;
         }
 
         Shooting();
@@ -235,11 +238,6 @@ public class PlayerSkills : MonoBehaviour
         }
     }
 
-    void SetCamera(int priority)
-    {
-        cam1.Priority = priority;
-    }
-
     void Rush()
     {
         if(Input.GetKeyDown(KeyCode.LeftShift))
@@ -324,7 +322,7 @@ public class PlayerSkills : MonoBehaviour
             {
                 if (indexNum < enemyObjs.Count)
                 {
-                    var rotation = Quaternion.Euler(0f, Random.Range(-100f, 100), Random.Range(0f, 90f));
+                    var rotation = Quaternion.Euler(0f, Random.Range(0, 360f), Random.Range(0f, 90f));
                     var tempBullet = Instantiate(trackObj, transform.position + new Vector3(0, 3, 0), rotation);
                     tempBullet.GetComponent<TrackBulletController>().Target = enemyObjs[indexNum].transform;
                     indexNum++;
@@ -350,7 +348,6 @@ public class PlayerSkills : MonoBehaviour
             //获得交点
             if (Physics.Linecast(transform.position, hit.transform.position, out hit) && hit.transform.tag == "Ground" && hit.distance < 0.5)
             {
-                Debug.Log(true);
                 return true;
             }
         }
@@ -361,8 +358,10 @@ public class PlayerSkills : MonoBehaviour
     {
         for (int i = 0; i < enemyObjs.Count; i++)
         {
-            Debug.Log(1);
-            enemyObjs[i].GetComponent<EnemyStatus>().isTrack = false;
+            if(enemyObjs[i] != null)
+            {
+                enemyObjs[i].GetComponent<EnemyStatus>().isTrack = false;
+            }
         }
 
         enemyObjs.Clear();
