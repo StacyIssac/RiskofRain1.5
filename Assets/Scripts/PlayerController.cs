@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,10 +13,16 @@ public class PlayerController : MonoBehaviour
     public float rotateSpeed = 4f;
     float turnSmoothVelocity = 0, angle = 0;
 
-    Vector3 moveDir;
+    [HideInInspector]
+    public Vector3 moveDir;
+    [HideInInspector]
+    public float targetAngle;
+    [HideInInspector]
+    public Vector3 direction;
+
     Vector3 moveAmount;
-    Vector3 direction;
-    Rigidbody rb;
+    [HideInInspector]
+    public Rigidbody rb;
 
     [Header("ÌøÔ¾")]
     public float jumpSpeed = 1f;
@@ -25,7 +33,7 @@ public class PlayerController : MonoBehaviour
     int jumpCount = 0;
 
     [Header("Ð±ÆÂ¼ì²â")]
-    public float rayLength = 0.5f;
+    public float rayLength = 1f;
     public float maxSlopeAngle = 45f;
     Vector3 hitNormal;
 
@@ -40,20 +48,20 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if(OnSlope())
-        //{
-        //    moveDir = Vector3.ProjectOnPlane(moveDir, hitNormal).normalized;
-        //}
-
         PlayerMovement();
         Jump();
     }
 
     private void FixedUpdate()
     {
-        if(direction.magnitude >= 0.1f)
+        //PlayerMovement();
+        if (direction.magnitude >= 0.1f)
         {
             rb.MovePosition(rb.position + moveAmount);
+        }
+        else
+        {
+            rb.velocity = new Vector3(0f, rb.velocity.y, 0f);
         }
 
         if (isGround)
@@ -74,8 +82,13 @@ public class PlayerController : MonoBehaviour
     {
         //Î»ÒÆ
         direction = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
-        float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
+        targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cam.eulerAngles.y;
         moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+        if (OnSlope())
+        {
+            moveDir = (Vector3.ProjectOnPlane(moveDir, hitNormal)).normalized;
+        }
+
         moveAmount = moveDir.normalized * moveSpeed * Time.deltaTime;
 
         //Ðý×ª
@@ -96,7 +109,9 @@ public class PlayerController : MonoBehaviour
     void ToHideCursor()
     {
         //Òþ²ØÊó±ê
-        Cursor.visible = false;
+        //Cursor.visible = false;
+        //Ëø¶¨Êó±ê
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     bool OnSlope()
@@ -108,7 +123,7 @@ public class PlayerController : MonoBehaviour
         {
             hitNormal = hit.normal;
             float slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
-            if(slopeAngle < maxSlopeAngle && slopeAngle > 0)
+            if(slopeAngle < maxSlopeAngle)
             {
                 return true;
             }
