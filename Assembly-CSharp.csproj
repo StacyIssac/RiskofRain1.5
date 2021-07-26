@@ -492,7 +492,6 @@
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\CircleCollider2D\GetOffset.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedBool.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\SetConstraints.cs" />
-    <Compile Include="Assets\Beautiful Progress Bar Free - CYKO\Scripts\SliderScripts.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\CharacterController\SetStepOffset.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\CharacterController\SimpleMove.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\CharacterController\Move.cs" />
@@ -522,6 +521,7 @@
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Animation\IsPlaying.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Rigidbody\GetIsKinematic.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Decorators\Repeater.cs" />
+    <Compile Include="Assets\Scripts\VertigoController.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Vector3\SetXYZ.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\String\GetRandomString.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Input\GetMouseButton.cs" />
@@ -614,7 +614,6 @@
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Transform\LookAt.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Vector2\ClampMagnitude.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\IsStopped.cs" />
-    <Compile Include="Assets\Scripts\VertigoController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Behavior Designer\Runtime\BehaviorDesigner.Runtime.dll" />
