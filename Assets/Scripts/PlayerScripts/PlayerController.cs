@@ -41,8 +41,6 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-
-        ToHideCursor();
     }
 
     // Update is called once per frame
@@ -104,14 +102,6 @@ public class PlayerController : MonoBehaviour
         {
             jumpPressed = true;
         }
-    }
-
-    void ToHideCursor()
-    {
-        //Òþ²ØÊó±ê
-        //Cursor.visible = false;
-        //Ëø¶¨Êó±ê
-        Cursor.lockState = CursorLockMode.Locked;
     }
 
     bool OnSlope()
