@@ -12,6 +12,7 @@ public class PlayerSkills : MonoBehaviour
     public float HP;
     public float maxHP;
     public Slider HPSlider;
+    public GameObject failPanel;
 
     [Header("射击")]
     //public float shootSpeed = 2f;
@@ -60,10 +61,10 @@ public class PlayerSkills : MonoBehaviour
     public float trackSpeed;
     public float trackValue;
     public float trackTempTimer = 1;
+    public float trackNum = 20;
     int putTrack = 0;
     int enemyNums = 0;
     int indexNum = 0;
-    float trackNum = 20;
     float trackTimer;
     bool isTrack = false;
     List<GameObject> enemyObjs = new List<GameObject>();
@@ -91,6 +92,12 @@ public class PlayerSkills : MonoBehaviour
     {
         //血量
         HPSlider.value = HP / maxHP;
+
+        if(HP < 0)
+        {
+            failPanel.SetActive(true);
+            Time.timeScale = 0;
+        }
 
         if (canRunning == 1)
         {
@@ -254,7 +261,14 @@ public class PlayerSkills : MonoBehaviour
             else //无移动方向
             {
                 //向镜头指向方向瞬移
-                rushVec = Vector3.Normalize(new Vector3(playerController.moveDir.x, ray.direction.y, playerController.moveDir.z));
+                if(ray.direction.y > 0)
+                {
+                    rushVec = Vector3.Normalize(new Vector3(playerController.moveDir.x, ray.direction.y, playerController.moveDir.z));
+                }
+                else
+                {
+                    rushVec = Vector3.Normalize(new Vector3(playerController.moveDir.x, 0, playerController.moveDir.z));
+                }
             }
             canRush = true;
         }
@@ -323,7 +337,7 @@ public class PlayerSkills : MonoBehaviour
                 if (indexNum < enemyObjs.Count)
                 {
                     var rotation = Quaternion.Euler(0f, Random.Range(0, 360f), Random.Range(0f, 90f));
-                    var tempBullet = Instantiate(trackObj, transform.position + new Vector3(0, 3, 0), rotation);
+                    var tempBullet = Instantiate(trackObj, transform.position + new Vector3(0, 2, 0), rotation);
                     tempBullet.GetComponent<TrackBulletController>().Target = enemyObjs[indexNum].transform;
                     indexNum++;
                 }

@@ -47,4 +47,13 @@ public class GameController : MonoBehaviour
         //Ëø¶¨Êó±ê
         Cursor.lockState = CursorLockMode.Locked;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Player")
+        {
+            Debug.Log(1);
+            other.gameObject.transform.position = new Vector3(0, 2, 0);
+        }
+    }
 }

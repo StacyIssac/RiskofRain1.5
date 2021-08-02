@@ -55,10 +55,25 @@ public class EnemyController : MonoBehaviour
                 enemyPos[i] = pos;
 
                 //创建射线检测的射线
-                Ray landRay = new Ray(pos, Vector3.down);
-                
+                Ray landRayDown = new Ray(pos, Vector3.down);
+                Ray landRayUp = new Ray(pos, Vector3.up);
+
                 //用射线检测确定地面位置
-                if(Physics.Raycast(landRay, out hit))
+                if (Physics.Raycast(landRayUp, out hit))
+                {
+                    if (hit.transform.tag == "Ground")
+                    {
+                        Vector3 pos2 = new Vector3(pos.x, 0, pos.y) + playerPos.position;
+                        //获得随机方向
+                        //var rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+                        //朝向玩家生成
+                        var rotation = Quaternion.LookRotation(playerPos.position);
+                        //生成怪物
+                        Instantiate(enemy[temp], pos2, rotation, null);
+                    }
+                }
+                //用射线检测确定地面位置
+                else if (Physics.Raycast(landRayDown, out hit))
                 {
                     if (hit.transform.tag == "Ground")
                     {
