@@ -10,7 +10,8 @@ public class VertigoController : MonoBehaviour
     float radius;
     float timer;
     bool canVertigo = false;
-    Vector3 moveForce;
+    [HideInInspector]
+    public Vector3 moveForce;
     Rigidbody rigi;
     PlayerController playerController;
     PlayerSkills playerSkills;
@@ -18,13 +19,11 @@ public class VertigoController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         playerSkills = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerSkills>();
         speed = playerSkills.vertigoSpeed;
         attackVal = playerSkills.vertigoValue;
         radius = playerSkills.vertigoRadius;
         rigi = GetComponent<Rigidbody>();
-        moveForce = Vector3.Normalize(playerController.moveDir);
     }
 
     // Update is called once per frame

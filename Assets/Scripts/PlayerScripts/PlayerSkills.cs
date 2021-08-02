@@ -79,6 +79,9 @@ public class PlayerSkills : MonoBehaviour
     bool isTrack = false;
     List<GameObject> enemyObjs = new List<GameObject>();
 
+    [Header("伤害数值")]
+    public GameObject PopupDamage;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -247,6 +250,7 @@ public class PlayerSkills : MonoBehaviour
         //左键射击
         if (Input.GetMouseButtonDown(0))
         {
+            CreateDamageVal(hit.point, (int)shootValue);
             enemyHit.transform.gameObject.GetComponent<EnemyStatus>().HP -= shootValue;
             enemyHit.transform.gameObject.GetComponent<EnemyStatus>().hasAttack = true;
         }
@@ -304,8 +308,9 @@ public class PlayerSkills : MonoBehaviour
             vertigoButton.isSkill = true;
 
             //创建一个导弹
-            var moveDir = Vector3.Normalize(playerController.moveDir);
-            Instantiate(vertigoObj, transform.position + new Vector3(moveDir.x * createDis, 0, moveDir.z * createDis), Quaternion.identity);
+            var moveDir = Vector3.Normalize(ray.direction);
+            var tempVertigo = Instantiate(vertigoObj, transform.position + new Vector3(moveDir.x * createDis, 2, moveDir.z * createDis), Quaternion.identity);
+            tempVertigo.GetComponent<VertigoController>().moveForce = ray.direction;
         }
     }
 
@@ -401,5 +406,11 @@ public class PlayerSkills : MonoBehaviour
         }
 
         enemyObjs.Clear();
+    }
+
+    void CreateDamageVal(Vector3 pos, int value)
+    {
+        GameObject mObject = (GameObject)Instantiate(PopupDamage, transform.position, Quaternion.identity);
+        mObject.GetComponent<AttackValue>().Value = value;
     }
 }

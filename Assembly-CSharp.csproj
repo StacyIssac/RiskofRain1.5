@@ -381,6 +381,7 @@
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\SharedVariables\CompareSharedTransformList.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\Move.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Physics2D\Raycast.cs" />
+    <Compile Include="Assets\Scripts\PropScripts\PropController.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\MovePosition.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\SetVelocity.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Animation\Play.cs" />
@@ -588,6 +589,7 @@
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\CapsuleCollider\SetRadius.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Rigidbody2D\GetRotation.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Vector3\GetForwardVector.cs" />
+    <Compile Include="Assets\Scripts\PropScripts\BoxController.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\PlayerPrefs\SetFloat.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\SphereCollider\GetRadius.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Actions\Wait.cs" />
@@ -621,7 +623,8 @@
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Transform\LookAt.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\Vector2\ClampMagnitude.cs" />
     <Compile Include="Assets\Behavior Designer\Runtime\Tasks\Unity\NavMeshAgent\IsStopped.cs" />
-    <Compile Include="Assets\Scripts\PropScripts\PropController.cs" />
+    <Compile Include="Assets\Scripts\PropScripts\ItemController.cs" />
+    <Compile Include="Assets\Scripts\EnemyScripts\AttackValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Behavior Designer\Runtime\BehaviorDesigner.Runtime.dll" />

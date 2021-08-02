@@ -30,8 +30,6 @@ public class EnemyController : MonoBehaviour
         {
             //随机数获得生成敌人数量
             int enemyCount = Random.Range(maxCount, minCount);
-            //随机数获得生成范围
-            float range = Random.Range(maxRange, minRange);
             //选择怪物生成的种类
             int temp = Random.Range(0, 2);
             //用数组存储坐标
@@ -55,39 +53,25 @@ public class EnemyController : MonoBehaviour
                 enemyPos[i] = pos;
 
                 //创建射线检测的射线
-                Ray landRayDown = new Ray(pos, Vector3.down);
-                Ray landRayUp = new Ray(pos, Vector3.up);
+                Ray landRayDown = new Ray(new Vector3(pos.x, 10, pos.y), Vector3.down);
 
                 //用射线检测确定地面位置
-                if (Physics.Raycast(landRayUp, out hit))
+                if (Physics.Raycast(landRayDown, out hit))
                 {
                     if (hit.transform.tag == "Ground")
                     {
-                        Vector3 pos2 = new Vector3(pos.x, 0, pos.y) + playerPos.position;
-                        //获得随机方向
-                        //var rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+                        Vector3 pos2 = new Vector3(pos.x, hit.point.y + 2, pos.y) + playerPos.position;
                         //朝向玩家生成
                         var rotation = Quaternion.LookRotation(playerPos.position);
                         //生成怪物
-                        Instantiate(enemy[temp], pos2, rotation, null);
+                        StartCoroutine(Waiting(temp, pos2, rotation));
+                        
                     }
                 }
-                //用射线检测确定地面位置
-                else if (Physics.Raycast(landRayDown, out hit))
+                else
                 {
-                    if (hit.transform.tag == "Ground")
-                    {
-                        Vector3 pos2 = new Vector3(pos.x, 0, pos.y) + playerPos.position;
-                        //获得随机方向
-                        //var rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
-                        //朝向玩家生成
-                        var rotation = Quaternion.LookRotation(playerPos.position);
-                        //生成怪物
-                        Instantiate(enemy[temp], pos2, rotation, null);
-                    }
+                    i--;
                 }
-
-                StartCoroutine(Waiting());
             }
             //随机获得怪物生成间隔时间
             tempTime = Random.Range(maxTime, minTime);
@@ -111,8 +95,9 @@ public class EnemyController : MonoBehaviour
         return true;
     }
 
-    IEnumerator Waiting()
+    IEnumerator Waiting(int temp, Vector3 pos, Quaternion rotation)
     {
+        Instantiate(enemy[temp], pos, rotation, null);
         yield return new WaitForSeconds(Random.Range(4f, 9f));
     }
 }
