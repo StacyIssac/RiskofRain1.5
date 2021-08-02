@@ -20,7 +20,7 @@ public class EnemyStatus : MonoBehaviour
 
     [Header("攻击")]
     GameObject player;
-    public float attackVal;
+    public int attackVal;
     public float attackDis;
     public float maxAttackTime;
     public float minAttackTime;
@@ -53,6 +53,8 @@ public class EnemyStatus : MonoBehaviour
         //生命值为0时消失
         if(HP <= 0)
         {
+            player.GetComponent<PlayerSkills>().exp += 5;
+            player.GetComponent<PlayerSkills>().energy += 4;
             Destroy(this.gameObject);
         }
         //准心瞄准时显示HP

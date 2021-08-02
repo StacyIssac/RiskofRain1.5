@@ -11,7 +11,7 @@ public class EnemyAttack : Action
     GameObject player;
     float attackDis;
     float attackTime = 0;
-    float attackVal;
+    int attackVal;
     float maxAttackTime;
     float minAttackTime;
 

@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour
             moveDir = (Vector3.ProjectOnPlane(moveDir, hitNormal)).normalized;
         }
 
-        moveAmount = moveDir.normalized * moveSpeed * Time.deltaTime;
+        moveAmount = moveDir.normalized * moveSpeed * 0.01f;
 
         //Ðý×ª
         angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, cam.eulerAngles.y, ref turnSmoothVelocity, turnSmoothTime);

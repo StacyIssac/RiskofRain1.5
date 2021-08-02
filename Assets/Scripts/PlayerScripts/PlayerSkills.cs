@@ -9,18 +9,27 @@ public class PlayerSkills : MonoBehaviour
     PlayerController playerController;
 
     [Header("血量")]
-    public float HP;
-    public float maxHP;
-    public Slider HPSlider;
+    public int HP;
+    public int maxHP;
     public GameObject failPanel;
 
+    [Header("等级")]
+    public int maxExp;
+    public float shootValAdd;
+    public int HPValAdd;
+    [HideInInspector]
+    public int exp = 0;
+    [HideInInspector]
+    public int level = 1;
+    
+    [Header("能量")]
+    public int energy = 0;
+
     [Header("射击")]
-    //public float shootSpeed = 2f;
     public float shootValue = 10f;
     public float shootRange = 5f;
     public float shootLength = 10f;
     public float capsuleLength = 0.1f;
-    //bool canHit = false;
     public float height;
     RaycastHit hit;
     RaycastHit enemyHit;
@@ -29,6 +38,7 @@ public class PlayerSkills : MonoBehaviour
     [Header("快跑")]
     public CinemachineFreeLook cam1;
     public CinemachineFreeLook cam2;
+    public GameObject playerObj;
     public float runningValue;
     float runSpeed;
     int canRunning = -1;
@@ -90,13 +100,25 @@ public class PlayerSkills : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //血量
-        HPSlider.value = HP / maxHP;
+        //等级
+        if(exp == maxExp)
+        {
+            level++;
+            exp = maxExp - exp;
+            shootValue += shootValAdd;
+            maxHP += HPValAdd;
+            HP += HPValAdd;
+        }
 
+        //血量
         if(HP < 0)
         {
             failPanel.SetActive(true);
             Time.timeScale = 0;
+        }
+        else if(HP > maxHP)
+        {
+            HP = maxHP;
         }
 
         if (canRunning == 1)
@@ -152,7 +174,7 @@ public class PlayerSkills : MonoBehaviour
             if (rushTime == 0)
             {
                 //隐藏人物模型
-                this.GetComponent<MeshRenderer>().enabled = false;
+                playerObj.SetActive(false);
                 rushTime += Time.deltaTime;
             }
             else if (rushTime > 0 && rushTime < rushMaxTime)
@@ -172,7 +194,7 @@ public class PlayerSkills : MonoBehaviour
             else if (rushTime >= rushMaxTime)
             {
                 //显示人物模型
-                this.GetComponent<MeshRenderer>().enabled = true;
+                playerObj.SetActive(true);
                 rushTime = 0;
                 canRush = false;
                 canRunning = 1;

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class SkillButtonController : MonoBehaviour
 {
     Image imageController;
+    
     public float skillCDTime;
     public bool isSkill;
     float timer = 0;
@@ -31,5 +32,7 @@ public class SkillButtonController : MonoBehaviour
             timer += Time.deltaTime;
             imageController.fillAmount += Time.deltaTime / skillCDTime;
         }
+
+
     }
 }

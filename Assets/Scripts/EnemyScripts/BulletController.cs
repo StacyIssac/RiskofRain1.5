@@ -6,7 +6,7 @@ public class BulletController : MonoBehaviour
 {
     [Header("×Óµ¯ÒÆ¶¯")]
     public float speed;
-    public float attackVal;
+    public int attackVal;
     Vector3 moveForce;
     Rigidbody rigi;
     Transform targetPos;
