@@ -43,8 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa1931d4a5533d047b77f5efc637b00f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mTarget: {x: 0, y: 0, z: 0}
   Value: 25
-  ContentWidth: 50
-  ContentHeight: 10
+  ContentWidth: 100
+  ContentHeight: 25
   ContentSpeed: 3
-  FreeTime: 2
+  FreeTime: 0.2

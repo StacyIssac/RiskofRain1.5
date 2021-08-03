@@ -97,7 +97,7 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator Waiting(int temp, Vector3 pos, Quaternion rotation)
     {
-        Instantiate(enemy[temp], pos, rotation, null);
         yield return new WaitForSeconds(Random.Range(4f, 9f));
+        Instantiate(enemy[temp], pos, rotation, null);
     }
 }

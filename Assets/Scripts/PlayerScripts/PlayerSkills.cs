@@ -31,6 +31,7 @@ public class PlayerSkills : MonoBehaviour
     public float shootLength = 10f;
     public float capsuleLength = 0.1f;
     public float height;
+    Vector3 hitTarget;
     RaycastHit hit;
     RaycastHit enemyHit;
     Ray ray;
@@ -53,6 +54,7 @@ public class PlayerSkills : MonoBehaviour
     float rushTime = 0;
     bool canRush = false;
     Vector3 rushVec = Vector3.zero;
+    RaycastHit wallHit;
 
     [Header("眩晕弹")]
     public SkillButtonController vertigoButton;
@@ -213,10 +215,10 @@ public class PlayerSkills : MonoBehaviour
         //射线检测到的第一个物体
         if(Physics.Raycast(ray, out hit))
         {
-            //Debug.DrawLine(transform.position, hit.transform.position, Color.red);
-
+            Debug.DrawLine(transform.position, hit.point, Color.red);
+            hitTarget = hit.point;
             //获得交点
-            if (Physics.Linecast(transform.position, hit.transform.position, out hit) && hit.transform.tag == "Enemy")
+            if (Physics.Linecast(transform.position, hit.point, out hit) && hit.transform.tag == "Enemy")
             {
                 enemyHit = hit;
                 CanShoot();
@@ -231,7 +233,8 @@ public class PlayerSkills : MonoBehaviour
         }
         else
         {
-            //Debug.DrawLine(transform.position, ray.origin + ray.direction * shootLength, Color.red);
+            Debug.DrawLine(transform.position, ray.origin + ray.direction * shootLength, Color.red);
+            hitTarget = ray.origin + ray.direction * shootLength;
             if (Physics.Linecast(transform.position, ray.origin + ray.direction * shootLength, out hit) && hit.transform.tag == "Enemy")
             {
                 CanShoot();
@@ -250,9 +253,11 @@ public class PlayerSkills : MonoBehaviour
         //左键射击
         if (Input.GetMouseButtonDown(0))
         {
-            CreateDamageVal(hit.point, (int)shootValue);
+            Debug.Log(1);
+
             enemyHit.transform.gameObject.GetComponent<EnemyStatus>().HP -= shootValue;
             enemyHit.transform.gameObject.GetComponent<EnemyStatus>().hasAttack = true;
+            CreateDamageVal(hitTarget, (int)shootValue);
         }
 
         //攻击时打断奔跑状态
@@ -384,10 +389,10 @@ public class PlayerSkills : MonoBehaviour
     {
         Ray wallRay = new Ray(transform.position, new Vector3(playerController.moveDir.x, ray.direction.y, playerController.moveDir.z));
         Debug.DrawRay(transform.position, new Vector3(playerController.moveDir.x, ray.direction.y, playerController.moveDir.z));
-        if (Physics.Raycast(wallRay, out hit))
+        if (Physics.Raycast(wallRay, out wallHit))
         {
             //获得交点
-            if (Physics.Linecast(transform.position, hit.transform.position, out hit) && hit.transform.tag == "Ground" && hit.distance < 0.5)
+            if (Physics.Linecast(transform.position, wallHit.transform.position, out wallHit) && wallHit.transform.tag == "Ground" && wallHit.distance < 0.5)
             {
                 return true;
             }
@@ -410,7 +415,8 @@ public class PlayerSkills : MonoBehaviour
 
     void CreateDamageVal(Vector3 pos, int value)
     {
-        GameObject mObject = (GameObject)Instantiate(PopupDamage, transform.position, Quaternion.identity);
+        GameObject mObject = (GameObject)Instantiate(PopupDamage, pos, Quaternion.identity);
         mObject.GetComponent<AttackValue>().Value = value;
+        mObject.GetComponent<AttackValue>().mTarget = pos;
     }
 }
