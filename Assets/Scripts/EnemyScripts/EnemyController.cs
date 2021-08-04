@@ -53,7 +53,7 @@ public class EnemyController : MonoBehaviour
                 enemyPos[i] = pos;
 
                 //创建射线检测的射线
-                Ray landRayDown = new Ray(new Vector3(pos.x, 10, pos.y), Vector3.down);
+                Ray landRayDown = new Ray(new Vector3(pos.x, 20, pos.y), Vector3.down);
 
                 //用射线检测确定地面位置
                 if (Physics.Raycast(landRayDown, out hit))
@@ -65,7 +65,6 @@ public class EnemyController : MonoBehaviour
                         var rotation = Quaternion.LookRotation(playerPos.position);
                         //生成怪物
                         StartCoroutine(Waiting(temp, pos2, rotation));
-                        
                     }
                 }
                 else

@@ -50,8 +50,10 @@ public class EnemyStatus : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Physics.SyncTransforms();
+
         //生命值为0时消失
-        if(HP <= 0)
+        if (HP <= 0)
         {
             player.GetComponent<PlayerSkills>().exp += 5;
             player.GetComponent<PlayerSkills>().energy += 4;

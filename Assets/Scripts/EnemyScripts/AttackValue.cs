@@ -63,7 +63,6 @@ public class AttackValue : MonoBehaviour
             GUI.skin.label.fontSize = 25;
             //内部使用GUI坐标进行绘制
             GUI.Label(new Rect(mPoint.x, mPoint.y, ContentWidth, ContentHeight), Value.ToString(), gUIStyle);
-            Debug.Log(1);
         }
     }
     IEnumerator Free()

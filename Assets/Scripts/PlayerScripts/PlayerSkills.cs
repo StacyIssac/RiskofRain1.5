@@ -212,19 +212,20 @@ public class PlayerSkills : MonoBehaviour
         Vector2 point = new Vector2(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2);
         ray = Camera.main.ScreenPointToRay(point);
 
-        //射线检测到的第一个物体
         if(Physics.Raycast(ray, out hit))
         {
-            Debug.DrawLine(transform.position, hit.point, Color.red);
+            
             hitTarget = hit.point;
             //获得交点
-            if (Physics.Linecast(transform.position, hit.point, out hit) && hit.transform.tag == "Enemy")
+            if (hit.transform.CompareTag("Enemy"))
             {
+                Debug.DrawLine(transform.position, hit.point + new Vector3(0, 1, 0), Color.red);
                 enemyHit = hit;
                 CanShoot();
             }
             else
             {
+                Debug.DrawLine(transform.position, hit.point, Color.green);
                 if (enemyHit.collider != null)
                 {
                     enemyHit.transform.GetComponent<EnemyStatus>().canSeeHP = false;
@@ -233,11 +234,15 @@ public class PlayerSkills : MonoBehaviour
         }
         else
         {
-            Debug.DrawLine(transform.position, ray.origin + ray.direction * shootLength, Color.red);
+            Debug.DrawLine(transform.position, ray.origin + ray.direction * shootLength, Color.blue);
             hitTarget = ray.origin + ray.direction * shootLength;
-            if (Physics.Linecast(transform.position, ray.origin + ray.direction * shootLength, out hit) && hit.transform.tag == "Enemy")
+            if (Physics.Linecast(transform.position, ray.origin + ray.direction * shootLength, out hit))
             {
-                CanShoot();
+                if(hit.transform.CompareTag("Enemy"))
+                {
+                    Debug.DrawLine(transform.position, hit.point, Color.red);
+                    CanShoot();
+                }
             }
         }
     }
@@ -368,16 +373,14 @@ public class PlayerSkills : MonoBehaviour
             {
                 if (indexNum < enemyObjs.Count)
                 {
-                    var rotation = Quaternion.Euler(0f, Random.Range(0, 360f), Random.Range(0f, 90f));
-                    var tempBullet = Instantiate(trackObj, transform.position + new Vector3(0, 2, 0), rotation);
-                    tempBullet.GetComponent<TrackBulletController>().Target = enemyObjs[indexNum].transform;
+                    var rotation = Quaternion.Euler(0f, Random.Range(0, 180f), Random.Range(0f, 90f));
+                    StartCoroutine(CreateTrace(rotation));
                     indexNum++;
                 }
                 else
                 {
                     indexNum = 0;
                 }
-
             }
 
             Invoke("UnTrack", 5f);
@@ -398,6 +401,14 @@ public class PlayerSkills : MonoBehaviour
             }
         }
         return false;
+    }
+
+    IEnumerator CreateTrace(Quaternion rotation)
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        var tempBullet = Instantiate(trackObj, transform.position + new Vector3(0, 2, 0), rotation);
+        tempBullet.GetComponent<TrackBulletController>().Target = enemyObjs[indexNum].transform;
     }
 
     void UnTrack()
