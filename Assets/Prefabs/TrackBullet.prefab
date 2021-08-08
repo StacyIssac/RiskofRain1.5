@@ -116,3 +116,4 @@ MonoBehaviour:
   Target: {fileID: 0}
   CurrentVelocity: 0
   attackValue: 48
+  PopupDamage: {fileID: 7934445329318654401, guid: 4588463e33a0abe40bdbead1af294e2a, type: 3}

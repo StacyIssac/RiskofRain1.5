@@ -4,32 +4,35 @@ using UnityEngine;
 
 public class TrackBulletController : MonoBehaviour
 {
-    [SerializeField, Tooltip("×î´ó×ªÍäËÙ¶È")]
+    [SerializeField, Tooltip("ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½Ù¶ï¿½")]
     private float MaximumRotationSpeed = 120.0f;
 
-    [SerializeField, Tooltip("¼ÓËÙ¶È")]
+    [SerializeField, Tooltip("ï¿½ï¿½ï¿½Ù¶ï¿½")]
     private float AcceleratedVeocity = 12.8f;
 
-    [SerializeField, Tooltip("×î¸ßËÙ¶È")]
+    [SerializeField, Tooltip("ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½")]
     private float MaximumVelocity = 30.0f;
 
-    [SerializeField, Tooltip("ÉúÃüÖÜÆÚ")]
+    [SerializeField, Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     private float MaximumLifeTime = 4f;
 
-    [SerializeField, Tooltip("ÉÏÉýÆÚÊ±¼ä")]
+    [SerializeField, Tooltip("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½")]
     private float AccelerationPeriod = 0.5f;
 
     [HideInInspector]
-    public Transform Target = null;        // Ä¿±ê
+    public Transform Target = null;        // Ä¿ï¿½ï¿½
     [HideInInspector]
-    public float CurrentVelocity = 0.0f;   // µ±Ç°ËÙ¶È
+    public float CurrentVelocity = 0.0f;   // ï¿½ï¿½Ç°ï¿½Ù¶ï¿½
 
-    public float attackValue;
+    public int attackValue;
 
-    private float lifeTime = 0.0f;            // ÉúÃüÆÚ
+    private float lifeTime = 0.0f;            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     float Velocity;
     float RotationSpeed;
+
+    [Header("ä¼¤å®³")]
+    public GameObject PopupDamage;
 
     private void Start()
     {
@@ -38,10 +41,10 @@ public class TrackBulletController : MonoBehaviour
         AccelerationPeriod = Random.Range(AccelerationPeriod, AccelerationPeriod + 0.4f);
     }
 
-    // ±¬Õ¨
+    // ï¿½ï¿½Õ¨
     private void Explode()
     {
-        // ÈýÃëºóÉ¾³ýµ¼µ¯ÎïÌå£¬ÕâÊ±ºòÑÌÎíÒÑ¾­É¢È¥£¬¿ÉÒÔÉ¾µôÎïÌåÁË
+        // ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¬ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½É¢È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Destroy(gameObject);
     }
 
@@ -50,7 +53,7 @@ public class TrackBulletController : MonoBehaviour
         float deltaTime = Time.deltaTime;
         lifeTime += deltaTime;
 
-        // Èç¹û³¬³öÉúÃüÖÜÆÚ£¬ÔòÖ±½Ó±¬Õ¨¡£
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½Ö±ï¿½Ó±ï¿½Õ¨ï¿½ï¿½
         if (lifeTime > MaximumLifeTime)
         {
             Explode();
@@ -63,43 +66,51 @@ public class TrackBulletController : MonoBehaviour
         }
         else
         {
-            // ¼ÆËã³¯ÏòÄ¿±êµÄ·½ÏòÆ«ÒÆÁ¿£¬Èç¹û´¦ÓÚÉÏÉýÆÚ£¬ÔòºöÂÔÄ¿±ê
+            // ï¿½ï¿½ï¿½ã³¯ï¿½ï¿½Ä¿ï¿½ï¿½Ä·ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½
             Vector3 offset = ((lifeTime < AccelerationPeriod) && (Target != null)) ? Vector3.up : (Target.position - transform.position).normalized;
 
-            // ¼ÆËãµ±Ç°·½ÏòÓëÄ¿±ê·½ÏòµÄ½Ç¶È²î
+            // ï¿½ï¿½ï¿½ãµ±Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ê·½ï¿½ï¿½Ä½Ç¶È²ï¿½
             float angle = Vector3.Angle(transform.forward, offset);
 
-            // ¸ù¾Ý×î´óÐý×ªËÙ¶È£¬¼ÆËã×ªÏòÄ¿±ê¹²¼ÆÐèÒªµÄÊ±¼ä
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½Ù¶È£ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½Ä¿ï¿½ê¹²ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ê±ï¿½ï¿½
             float needTime = angle / (RotationSpeed * (CurrentVelocity / Velocity));
 
-            // Èç¹û½Ç¶ÈºÜÐ¡£¬¾ÍÖ±½Ó¶Ô×¼Ä¿±ê
+            // ï¿½ï¿½ï¿½ï¿½Ç¶Èºï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó¶ï¿½×¼Ä¿ï¿½ï¿½
             if (Vector3.Distance(Target.position, transform.position) < 30)
             {
                 transform.forward = offset;
             }
             else
             {
-                // µ±Ç°Ö¡¼ä¸ôÊ±¼ä³ýÒÔÐèÒªµÄÊ±¼ä£¬»ñÈ¡±¾´ÎÓ¦¸ÃÐý×ªµÄ±ÈÀý¡£
+                // ï¿½ï¿½Ç°Ö¡ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½×ªï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½
                 transform.forward = Vector3.Slerp(transform.forward, offset, deltaTime / needTime).normalized;
             }
 
-            // Èç¹ûµ±Ç°ËÙ¶ÈÐ¡ÓÚ×î¸ßËÙ¶È£¬Ôò½øÐÐ¼ÓËÙ
+            // ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½Ù¶ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È£ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½
             if (CurrentVelocity < MaximumVelocity)
                 CurrentVelocity += deltaTime * AcceleratedVeocity;
 
-            // ³¯×Ô¼ºµÄÇ°·½Î»ÒÆ
+            // ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½Ç°ï¿½ï¿½Î»ï¿½ï¿½
             transform.position += transform.forward * CurrentVelocity * deltaTime;
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // µ±·¢ÉúÅö×²£¬±¬Õ¨
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½ï¿½Õ¨
         if(other.tag == "Enemy")
         {
             other.gameObject.GetComponent<EnemyStatus>().HP -= attackValue;
             other.gameObject.GetComponent<EnemyStatus>().hasAttack = true;
+            CreateDamageVal(other.transform.position, attackValue);
         }
         Explode();
+    }
+
+    void CreateDamageVal(Vector3 pos, int value)
+    {
+        GameObject mObject = (GameObject)Instantiate(PopupDamage, pos, Quaternion.identity);
+        mObject.GetComponent<AttackValue>().Value = value;
+        mObject.GetComponent<AttackValue>().mTarget = pos;
     }
 }

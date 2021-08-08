@@ -154,8 +154,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9363a4fd5453c784598a595a2c556492, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 100
-  attackVal: 30
+  moveForce: {x: 0, y: 0, z: 0}
+  PopupDamage: {fileID: 7934445329318654401, guid: 4588463e33a0abe40bdbead1af294e2a, type: 3}
 --- !u!54 &7547090284777815227
 Rigidbody:
   m_ObjectHideFlags: 0

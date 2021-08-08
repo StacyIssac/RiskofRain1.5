@@ -8,12 +8,12 @@ public class PlayerSkills : MonoBehaviour
 {
     PlayerController playerController;
 
-    [Header("ÑªÁ¿")]
+    [Header("è¡€é‡")]
     public int HP;
     public int maxHP;
     public GameObject failPanel;
 
-    [Header("µÈ¼¶")]
+    [Header("ç­‰çº§")]
     public int maxExp;
     public float shootValAdd;
     public int HPValAdd;
@@ -22,29 +22,30 @@ public class PlayerSkills : MonoBehaviour
     [HideInInspector]
     public int level = 1;
     
-    [Header("ÄÜÁ¿")]
+    [Header("èƒ½é‡")]
     public int energy = 0;
 
-    [Header("Éä»÷")]
+    [Header("æ”»å‡»")]
     public float shootValue = 10f;
     public float shootRange = 5f;
     public float shootLength = 10f;
     public float capsuleLength = 0.1f;
     public float height;
+    bool canShoot;
     Vector3 hitTarget;
     RaycastHit hit;
     RaycastHit enemyHit;
     Ray ray;
 
-    [Header("¿ìÅÜ")]
+    [Header("å¿«è·‘")]
     public CinemachineFreeLook cam1;
-    public CinemachineFreeLook cam2;
+    //public CinemachineFreeLook cam2;
     public GameObject playerObj;
     public float runningValue;
     float runSpeed;
     int canRunning = -1;
 
-    [Header("Ë²ÒÆ³å´Ì")]
+    [Header("ç¬ç§»")]
     public SkillButtonController rushButton;
     public float rushCDTime;
     public float rushDis;
@@ -56,17 +57,17 @@ public class PlayerSkills : MonoBehaviour
     Vector3 rushVec = Vector3.zero;
     RaycastHit wallHit;
 
-    [Header("Ñ£ÔÎµ¯")]
+    [Header("çœ©æ™•")]
     public SkillButtonController vertigoButton;
     public GameObject vertigoObj;
     public float vertigoCDTime;
     public float createDis;
     public float vertigoSpeed;
-    public float vertigoValue;
+    public int vertigoValue;
     public float vertigoRadius;
     float vertigoTimer;
 
-    [Header("¸ú×Ùµ¼µ¯")]
+    [Header("è¿½è¸ªå¯¼å¼¹")]
     public SkillButtonController trackButton;
     public GameObject trackObj;
     public float trackCDTime;
@@ -81,7 +82,7 @@ public class PlayerSkills : MonoBehaviour
     bool isTrack = false;
     List<GameObject> enemyObjs = new List<GameObject>();
 
-    [Header("ÉËº¦ÊıÖµ")]
+    [Header("ä¼¤å®³")]
     public GameObject PopupDamage;
 
     // Start is called before the first frame update
@@ -92,7 +93,7 @@ public class PlayerSkills : MonoBehaviour
         runSpeed = playerController.moveSpeed;
         HP = maxHP;
 
-        //ÉèÖÃ¼¼ÄÜCD
+        //ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½CD
         rushTimer = 0;
         vertigoTimer = 0;
         trackTimer = 0;
@@ -105,7 +106,7 @@ public class PlayerSkills : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //µÈ¼¶
+        //ï¿½È¼ï¿½
         if(exp == maxExp)
         {
             level++;
@@ -115,7 +116,7 @@ public class PlayerSkills : MonoBehaviour
             HP += HPValAdd;
         }
 
-        //ÑªÁ¿
+        //Ñªï¿½ï¿½
         if(HP < 0)
         {
             failPanel.SetActive(true);
@@ -125,24 +126,23 @@ public class PlayerSkills : MonoBehaviour
         {
             HP = maxHP;
         }
-
+        
         if (canRunning == 1)
         {
             playerController.moveSpeed = runningValue;
-            cam1.enabled = true;
-            cam2.enabled = false;
+            //cam1.priority = 0;
+            cam1.Priority = 0;
+            
         }
         else
         {
             playerController.moveSpeed = runSpeed;
-            cam1.enabled = false;
-            cam2.enabled = true;
+            cam1.Priority = 10;
         }
 
-        Shooting();
         Running();
 
-        //³å´Ì
+        //ï¿½ï¿½ï¿½
         if (rushTimer < 0)
         {
             Rush();
@@ -152,7 +152,7 @@ public class PlayerSkills : MonoBehaviour
             rushTimer -= Time.deltaTime;
         }
 
-        //Ñ£ÔÎ
+        //Ñ£ï¿½ï¿½
         if (vertigoTimer < 0)
         {
             Vertigo();
@@ -162,7 +162,7 @@ public class PlayerSkills : MonoBehaviour
             vertigoTimer -= Time.deltaTime;
         }
 
-        //×·×Ù
+        //×·ï¿½ï¿½
         if (trackTimer < 0)
         {
             TrackCheck();
@@ -172,19 +172,23 @@ public class PlayerSkills : MonoBehaviour
             trackTimer -= Time.deltaTime;
         }
 
+        if(canShoot)
+        {
+            CanShoot();
+        }
         Track();
 
         if (canRush)
         {
             if (rushTime == 0)
             {
-                //Òş²ØÈËÎïÄ£ĞÍ
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
                 playerObj.SetActive(false);
                 rushTime += Time.deltaTime;
             }
             else if (rushTime > 0 && rushTime < rushMaxTime)
             {
-                //¿ìËÙÒÆ¶¯
+                //ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½
                 if(WallCheck())
                 {
                     rushTime = rushMaxTime;
@@ -198,7 +202,7 @@ public class PlayerSkills : MonoBehaviour
             }
             else if (rushTime >= rushMaxTime)
             {
-                //ÏÔÊ¾ÈËÎïÄ£ĞÍ
+                //ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
                 playerObj.SetActive(true);
                 rushTime = 0;
                 canRush = false;
@@ -207,43 +211,51 @@ public class PlayerSkills : MonoBehaviour
         }
     }
 
+    void FixedUpdate()
+    {
+        Shooting();
+    }
+
     void Shooting()
     {
         Vector2 point = new Vector2(Camera.main.pixelWidth / 2, Camera.main.pixelHeight / 2);
         ray = Camera.main.ScreenPointToRay(point);
-
-        if(Physics.Raycast(ray, out hit))
+        Physics.Raycast(ray, out hit);
+        if(hit.transform != null)
         {
             
             hitTarget = hit.point;
-            //»ñµÃ½»µã
+            //ï¿½ï¿½Ã½ï¿½ï¿½ï¿½
             if (hit.transform.CompareTag("Enemy"))
             {
-                Debug.DrawLine(transform.position, hit.point + new Vector3(0, 1, 0), Color.red);
+                Debug.DrawLine(transform.position, hit.point, Color.red);
                 enemyHit = hit;
-                CanShoot();
+                //CanShoot();
+                canShoot = true;
             }
             else
             {
-                Debug.DrawLine(transform.position, hit.point, Color.green);
+                if(hit.transform.CompareTag("Ground"))
+                {
+                    Debug.DrawLine(transform.position, hit.point, Color.green);
+                }
+                else
+                {
+                    Debug.DrawLine(transform.position, hit.point, Color.black);
+                }
+                
                 if (enemyHit.collider != null)
                 {
                     enemyHit.transform.GetComponent<EnemyStatus>().canSeeHP = false;
                 }
+                canShoot = false;
             }
         }
         else
         {
             Debug.DrawLine(transform.position, ray.origin + ray.direction * shootLength, Color.blue);
             hitTarget = ray.origin + ray.direction * shootLength;
-            if (Physics.Linecast(transform.position, ray.origin + ray.direction * shootLength, out hit))
-            {
-                if(hit.transform.CompareTag("Enemy"))
-                {
-                    Debug.DrawLine(transform.position, hit.point, Color.red);
-                    CanShoot();
-                }
-            }
+            canShoot = false;
         }
     }
 
@@ -251,11 +263,11 @@ public class PlayerSkills : MonoBehaviour
     {
         if(enemyHit.collider != null)
         {
-            //×¼ĞÄÃé×¼¹ÖÎïÏÔÊ¾HP
+            //×¼ï¿½ï¿½ï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾HP
             enemyHit.transform.GetComponent<EnemyStatus>().canSeeHP = true;
         }
 
-        //×ó¼üÉä»÷
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (Input.GetMouseButtonDown(0))
         {
             Debug.Log(1);
@@ -265,7 +277,7 @@ public class PlayerSkills : MonoBehaviour
             CreateDamageVal(hitTarget, (int)shootValue);
         }
 
-        //¹¥»÷Ê±´ò¶Ï±¼ÅÜ×´Ì¬
+        //ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ï±ï¿½ï¿½ï¿½×´Ì¬
         canRunning = -1;
     }
 
@@ -288,15 +300,15 @@ public class PlayerSkills : MonoBehaviour
             rushTimer = rushCDTime;
             rushButton.isSkill = true;
 
-            //ÓĞÒÆ¶¯·½Ïò
+            //ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½
             if (playerController.direction.magnitude >= 0.1f)
             {
-                //ÏòÒÆ¶¯·½ÏòË²ÒÆ
+                //ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½Ë²ï¿½ï¿½
                 rushVec = (Quaternion.Euler(0f, playerController.targetAngle, 0f) * Vector3.forward).normalized;
             }
-            else //ÎŞÒÆ¶¯·½Ïò
+            else //ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½
             {
-                //Ïò¾µÍ·Ö¸Ïò·½ÏòË²ÒÆ
+                //ï¿½ï¿½Í·Ö¸ï¿½ï¿½ï¿½ï¿½Ë²ï¿½ï¿½
                 if(ray.direction.y > 0)
                 {
                     rushVec = Vector3.Normalize(new Vector3(playerController.moveDir.x, ray.direction.y, playerController.moveDir.z));
@@ -317,7 +329,7 @@ public class PlayerSkills : MonoBehaviour
             vertigoTimer = vertigoCDTime;
             vertigoButton.isSkill = true;
 
-            //´´½¨Ò»¸öµ¼µ¯
+            //ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             var moveDir = Vector3.Normalize(ray.direction);
             var tempVertigo = Instantiate(vertigoObj, transform.position + new Vector3(moveDir.x * createDis, 2, moveDir.z * createDis), Quaternion.identity);
             tempVertigo.GetComponent<VertigoController>().moveForce = ray.direction;
@@ -331,7 +343,7 @@ public class PlayerSkills : MonoBehaviour
             trackTimer = trackCDTime;
             trackButton.isSkill = true;
 
-            //µ±µÚÒ»´Î°´ÏÂRÊ±£¬¿ªÆôËø¶¨
+            //ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î°ï¿½ï¿½ï¿½RÊ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (putTrack == 0 && !isTrack)
             {
                 putTrack = 1;
@@ -351,15 +363,15 @@ public class PlayerSkills : MonoBehaviour
 
         if (putTrack == 1)
         {
-            //»ñµÃ½»µã
-            if (Physics.Raycast(ray.origin, ray.direction, out hit) && enemyNums < trackNum)
+            //ï¿½ï¿½Ã½ï¿½ï¿½ï¿½
+            if (enemyHit.transform != null && enemyNums < trackNum)
             {
-                if(hit.transform.tag == "Enemy")
+                if(enemyHit.transform.tag == "Enemy")
                 {
-                    if (!hit.transform.gameObject.GetComponent<EnemyStatus>().isTrack)
+                    if (!enemyHit.transform.gameObject.GetComponent<EnemyStatus>().isTrack)
                     {
-                        hit.transform.gameObject.GetComponent<EnemyStatus>().isTrack = true;
-                        enemyObjs.Add(hit.transform.gameObject);
+                        enemyHit.transform.gameObject.GetComponent<EnemyStatus>().isTrack = true;
+                        enemyObjs.Add(enemyHit.transform.gameObject);
                     }
                 }
             }
@@ -367,14 +379,15 @@ public class PlayerSkills : MonoBehaviour
         }
         else if (putTrack == 2)
         {
-            //·¢Éäµ¼µ¯
+            //ï¿½ï¿½ï¿½äµ¼ï¿½ï¿½
             indexNum = 0;
             for (int i = 0; i < trackNum; i++)
             {
                 if (indexNum < enemyObjs.Count)
                 {
+                    Debug.Log(enemyObjs.Count);
                     var rotation = Quaternion.Euler(0f, Random.Range(0, 180f), Random.Range(0f, 90f));
-                    StartCoroutine(CreateTrace(rotation));
+                    StartCoroutine(CreateTrace(rotation, indexNum));
                     indexNum++;
                 }
                 else
@@ -394,7 +407,7 @@ public class PlayerSkills : MonoBehaviour
         Debug.DrawRay(transform.position, new Vector3(playerController.moveDir.x, ray.direction.y, playerController.moveDir.z));
         if (Physics.Raycast(wallRay, out wallHit))
         {
-            //»ñµÃ½»µã
+            //ï¿½ï¿½Ã½ï¿½ï¿½ï¿½
             if (Physics.Linecast(transform.position, wallHit.transform.position, out wallHit) && wallHit.transform.tag == "Ground" && wallHit.distance < 0.5)
             {
                 return true;
@@ -403,12 +416,12 @@ public class PlayerSkills : MonoBehaviour
         return false;
     }
 
-    IEnumerator CreateTrace(Quaternion rotation)
+    IEnumerator CreateTrace(Quaternion rotation, int i)
     {
         yield return new WaitForSeconds(0.5f);
 
         var tempBullet = Instantiate(trackObj, transform.position + new Vector3(0, 2, 0), rotation);
-        tempBullet.GetComponent<TrackBulletController>().Target = enemyObjs[indexNum].transform;
+        tempBullet.GetComponent<TrackBulletController>().Target = enemyObjs[i].transform;
     }
 
     void UnTrack()

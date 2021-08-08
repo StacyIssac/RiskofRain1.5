@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class VertigoController : MonoBehaviour
 {
-    [Header("×Óµ¯ÒÆ¶¯")]
+    [Header("çœ©æ™•")]
     float speed;
-    float attackVal;
+    int attackVal;
     float radius;
     float timer;
     bool canVertigo = false;
@@ -15,6 +15,9 @@ public class VertigoController : MonoBehaviour
     Rigidbody rigi;
     PlayerController playerController;
     PlayerSkills playerSkills;
+
+    [Header("ä¼¤å®³")]
+    public GameObject PopupDamage;
 
     // Start is called before the first frame update
     void Start()
@@ -41,8 +44,9 @@ public class VertigoController : MonoBehaviour
             {
                 if(hitCollider.tag == "Enemy")
                 {
-                    hitCollider.gameObject.GetComponent<EnemyStatus>().hasAttack = true;
+                    hitCollider.gameObject.GetComponent<EnemyStatus>().hasVertigo = true;
                     hitCollider.gameObject.GetComponent<EnemyStatus>().HP -= attackVal;
+                    CreateDamageVal(hitCollider.transform.position, attackVal);
                 }
             }
             Destroy(this.gameObject);
@@ -62,5 +66,12 @@ public class VertigoController : MonoBehaviour
             GetComponent<MeshRenderer>().enabled = false;
             canVertigo = true;
         }
+    }
+
+    void CreateDamageVal(Vector3 pos, int value)
+    {
+        GameObject mObject = (GameObject)Instantiate(PopupDamage, pos, Quaternion.identity);
+        mObject.GetComponent<AttackValue>().Value = value;
+        mObject.GetComponent<AttackValue>().mTarget = pos;
     }
 }

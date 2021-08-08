@@ -32,6 +32,7 @@ public class EnemyStatus : MonoBehaviour
     [Header("受到攻击")]
     public float waitTime;
     public bool hasAttack = false;
+    public bool hasVertigo = false;
 
     [Header("导弹锁定")]
     public GameObject trackObj;
@@ -78,7 +79,7 @@ public class EnemyStatus : MonoBehaviour
         }
 
         //被攻击时产生僵直
-        if(hasAttack)
+        if(hasAttack || hasVertigo)
         {
             StartCoroutine(HadAttack());
             canSeeHP = true;
@@ -107,5 +108,6 @@ public class EnemyStatus : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         hasAttack = false;
+        hasVertigo = false;
     }
 }
